@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Leaf, Mail, Lock, User, Eye, EyeOff, MapPin, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -18,8 +20,10 @@ const Signup = () => {
     confirmPassword: ""
   });
   const { toast } = useToast();
+  const { signUp } = useUser();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -31,11 +35,39 @@ const Signup = () => {
       return;
     }
 
-    // Since we don't have Supabase connected yet, show a mock success
-    toast({
-      title: "Account Created!",
-      description: "Welcome to ReWear! Connect Supabase for full registration.",
-    });
+    setLoading(true);
+    
+    try {
+      const userData = {
+        full_name: formData.fullName,
+        phone: formData.phone,
+        location: formData.location,
+      };
+
+      const { error } = await signUp(formData.email, formData.password, userData);
+      
+      if (error) {
+        toast({
+          title: "Registration Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Account Created!",
+          description: "Welcome to ReWear! Please check your email to verify your account.",
+        });
+        navigate("/login");
+      }
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -182,8 +214,8 @@ const Signup = () => {
                 </Label>
               </div>
 
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
 
               <div className="text-center">

@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Leaf, User, Heart, Search } from "lucide-react";
+import { Menu, X, Leaf, User, Heart, Search, LogOut } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useUser();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="bg-card border-b border-border shadow-card sticky top-0 z-50">
@@ -33,15 +41,32 @@ const Header = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/login">
-                <User className="h-4 w-4 mr-2" />
-                Login
-              </Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link to="/signup">Sign Up</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/dashboard">
+                    <User className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/login">
+                    <User className="h-4 w-4 mr-2" />
+                    Login
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -81,17 +106,37 @@ const Header = () => {
                 About
               </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <User className="h-4 w-4 mr-2" />
-                    Login
-                  </Link>
-                </Button>
-                <Button size="sm" asChild>
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    Sign Up
-                  </Link>
-                </Button>
+                {user ? (
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                        <User className="h-4 w-4 mr-2" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                      handleSignOut();
+                      setIsMenuOpen(false);
+                    }}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                        <User className="h-4 w-4 mr-2" />
+                        Login
+                      </Link>
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                        Sign Up
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

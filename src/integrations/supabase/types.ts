@@ -7,14 +7,128 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_profiles: {
+        Row: {
+          id: string
+          full_name: string | null
+          phone: string | null
+          location: string | null
+          points: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          full_name?: string | null
+          phone?: string | null
+          location?: string | null
+          points?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          full_name?: string | null
+          phone?: string | null
+          location?: string | null
+          points?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      items: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          description: string | null
+          category: string
+          condition: string
+          size: string | null
+          brand: string | null
+          price: number | null
+          points_required: number | null
+          images: string[] | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          description?: string | null
+          category: string
+          condition: string
+          size?: string | null
+          brand?: string | null
+          price?: number | null
+          points_required?: number | null
+          images?: string[] | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string
+          description?: string | null
+          category?: string
+          condition?: string
+          size?: string | null
+          brand?: string | null
+          price?: number | null
+          points_required?: number | null
+          images?: string[] | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      transactions: {
+        Row: {
+          id: string
+          item_id: string
+          buyer_id: string
+          seller_id: string
+          transaction_type: string
+          status: string
+          points_exchanged: number
+          amount_paid: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          buyer_id: string
+          seller_id: string
+          transaction_type: string
+          status?: string
+          points_exchanged?: number
+          amount_paid?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          buyer_id?: string
+          seller_id?: string
+          transaction_type?: string
+          status?: string
+          points_exchanged?: number
+          amount_paid?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
